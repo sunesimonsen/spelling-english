@@ -52,15 +52,6 @@ export const choices = {
   },
 };
 
-const choicesById = {
-  inputs: { choices },
-  compute: ({ choices }) =>
-    choices.reduce(
-      (result, choice) => ({ ...result, [choice.id]: choice }),
-      {}
-    ),
-};
-
 const proposalById = {
   inputs: { proposal },
   compute: ({ proposal }) =>
@@ -88,9 +79,26 @@ export const completeProposal = {
   compute: ({ solution, proposal }) => solution.length === proposal.length,
 };
 
+export const correctProposal = {
+  inputs: {
+    solution,
+    proposal,
+  },
+  compute: ({ solution, proposal }) =>
+    solution.length === proposal.length &&
+    solution.every((letter, i) => proposal[i].letter === letter),
+};
+
 export const pickChoice = (choice) => ({
   payload: choice,
   apply: (cache, { payload }) => {
     cache.update(proposal, (proposal) => [...proposal, payload]);
+  },
+});
+
+export const nextExercise = () => ({
+  apply: (cache) => {
+    cache.set(proposal, []);
+    cache.update(currentExercise, (currentExercise) => currentExercise + 1);
   },
 });
