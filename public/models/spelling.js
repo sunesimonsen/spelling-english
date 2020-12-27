@@ -12,22 +12,23 @@ const word = {
 
 const possibleCharacters = {
   inputs: { words },
-  compute: ({ words }) =>
-    words.reduce((result, word) => {
-      [...word.danish].forEach((c) => {
-        result.add(c);
-      });
+  compute: ({ words }) => {
+    return Array.from(
+      words.reduce((result, word) => {
+        [...word.danish].forEach((c) => {
+          result.add(c);
+        });
 
-      return result;
-    }, new Set()),
+        return result;
+      }, new Set())
+    );
+  },
 };
 
 export const solution = {
   inputs: { word },
   compute: ({ word }) => [...word.danish],
 };
-
-let nextId = 0;
 
 export const choices = {
   inputs: { solution, possibleCharacters },
@@ -36,17 +37,16 @@ export const choices = {
     const noiseLength = Math.min(8 - solution.length);
 
     if (noiseLength > 0) {
-      const possibleCharactersClone = new Set(possibleCharacters);
+      const used = new Set(solution);
 
-      solution.forEach((c) => {
-        possibleCharactersClone.delete(c);
-      });
-
-      noise = pickSet(Array.from(possibleCharactersClone), noiseLength);
+      noise = pickSet(
+        possibleCharacters.filter((c) => !used.has(c)),
+        noiseLength
+      );
     }
 
-    return shuffle([...solution, ...noise]).map((letter) => ({
-      id: nextId++,
+    return shuffle([...solution, ...noise]).map((letter, i) => ({
+      id: i,
       letter,
     }));
   },
@@ -61,11 +61,6 @@ const choicesById = {
     ),
 };
 
-export const choiceById = (id) => ({
-  inputs: { choiceById },
-  compute: ({ choiceById }) => choiceById[id],
-});
-
 const proposalById = {
   inputs: { proposal },
   compute: ({ proposal }) =>
@@ -75,11 +70,15 @@ const proposalById = {
     ),
 };
 
-export const visibleChoices = {
-  inputs: { proposalById, choices },
-  compute: ({ proposalById, choices }) =>
-    choices.filter((choice) => !proposalById[choice.id]),
-};
+export const choiceIsUsed = (id) => ({
+  inputs: { proposalById },
+  compute: ({ proposalById }) => Boolean(proposalById[id]),
+});
+
+export const choiceById = (id) => ({
+  inputs: { choiceById },
+  compute: ({ choiceById }) => choiceById[id],
+});
 
 export const completeProposal = {
   inputs: {
@@ -93,11 +92,5 @@ export const pickChoice = (choice) => ({
   payload: choice,
   apply: (cache, { payload }) => {
     cache.update(proposal, (proposal) => [...proposal, payload]);
-  },
-});
-
-export const removeLastProposalLetter = () => ({
-  apply: (cache, { payload }) => {
-    cache.update(proposal, (proposal) => proposal.slice(0, -1));
   },
 });
