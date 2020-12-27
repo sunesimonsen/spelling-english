@@ -1,5 +1,5 @@
 import { html } from "htm/preact";
-import { css } from "stylewars";
+import { css, classes } from "stylewars";
 
 const styles = css`
   & {
@@ -15,10 +15,20 @@ const styles = css`
     vertical-align: middle;
     line-height: 80px;
   }
+
+  &.correct {
+    background: #baefba;
+    border: thin green solid;
+  }
+
+  &.incorrect {
+    background: #ffd4d4;
+    border: thin red solid;
+  }
 `;
 
-const ProposalLetter = ({ choice }) => html`
-  <span class=${styles}>${choice && choice.letter}</span>
+const ProposalLetter = ({ status, choice }) => html`
+  <span class=${classes(styles, status)}>${choice && choice.letter}</span>
 `;
 
 export default ProposalLetter;
