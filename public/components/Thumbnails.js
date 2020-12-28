@@ -1,6 +1,6 @@
 import { html, Component } from "htm/preact";
 import { connect } from "@depository/preact";
-import { loadImages, images } from "../models/spelling.js";
+import { loadImages, images, query } from "../models/spelling.js";
 import Thumbnail from "./Thumbnail.js";
 import { css } from "stylewars";
 
@@ -15,11 +15,16 @@ const styles = css`
 
 class Thumbnails extends Component {
   componentDidMount() {
-    this.props.dispatch(loadImages());
+    this.props.dispatch(loadImages(this.props.query));
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.query !== this.props.query) {
+      this.props.dispatch(loadImages(this.props.query));
+    }
   }
 
   render({ images }) {
-    console.log(images);
     return html`
       <div class=${styles}>
         ${images.map(
@@ -30,4 +35,4 @@ class Thumbnails extends Component {
   }
 }
 
-export default connect(Thumbnails, { images });
+export default connect(Thumbnails, { query, images });

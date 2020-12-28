@@ -8,7 +8,7 @@ import { words } from "../words.js";
 import * as api from "../api.js";
 
 const store = new Store({
-  currentExercise: 0,
+  currentExercise: api.retrieveExercise(),
   proposal: [],
   words,
   images: [],

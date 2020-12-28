@@ -98,9 +98,10 @@ export const pickChoice = (choice) => ({
 });
 
 export const nextExercise = () => ({
-  apply: (cache) => {
+  payload: (cache, api) => api.saveExercise(cache.get(currentExercise) + 1),
+  apply: (cache, { payload }) => {
     cache.set(proposal, []);
-    cache.update(currentExercise, (currentExercise) => currentExercise + 1);
+    cache.set(currentExercise, payload);
   },
 });
 
@@ -110,9 +111,14 @@ export const retryExercise = () => ({
   },
 });
 
-export const loadImages = () => ({
-  payload: (cache, api) => api.loadImages(),
+export const loadImages = (query) => ({
+  payload: (cache, api) => api.loadImages(query),
   apply: (cache, { payload }) => {
     cache.set(images, payload);
   },
 });
+
+export const query = {
+  inputs: { word },
+  compute: ({ word }) => word.english,
+};
