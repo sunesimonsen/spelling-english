@@ -6,6 +6,7 @@ const styles = css`
   & {
     background: #f3ccff;
     flex: 1;
+    text-align: center;
   }
 `;
 

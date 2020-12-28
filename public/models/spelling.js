@@ -3,6 +3,7 @@ import { shuffle, pickSet } from "../utils/random.js";
 const words = "words";
 const currentExercise = "currentExercise";
 export const proposal = "proposal";
+export const images = "images";
 
 const word = {
   inputs: { words, currentExercise },
@@ -100,5 +101,18 @@ export const nextExercise = () => ({
   apply: (cache) => {
     cache.set(proposal, []);
     cache.update(currentExercise, (currentExercise) => currentExercise + 1);
+  },
+});
+
+export const retryExercise = () => ({
+  apply: (cache) => {
+    cache.set(proposal, []);
+  },
+});
+
+export const loadImages = () => ({
+  payload: (cache, api) => api.loadImages(),
+  apply: (cache, { payload }) => {
+    cache.set(images, payload);
   },
 });

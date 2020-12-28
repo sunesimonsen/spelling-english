@@ -11,6 +11,7 @@ const store = new Store({
   currentExercise: 0,
   proposal: [],
   words,
+  images: [],
 });
 
 store.useMiddleware(promiseMiddleware(api));
