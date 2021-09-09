@@ -1,4 +1,4 @@
-import { html } from "htm/preact";
+import { html } from "@depository/view";
 import { css } from "stylewars";
 
 const styles = css`
@@ -10,8 +10,10 @@ const styles = css`
   }
 `;
 
-const Thumbnail = ({ image }) => html`
-  <img src=${image.thumbnailUrl} alt=${image.name} class=${styles} />
-`;
-
-export default Thumbnail;
+export class Thumbnail {
+  render({ image }) {
+    return html`
+      <img src=${image.thumbnailUrl} alt=${image.name} class=${styles} />
+    `;
+  }
+}

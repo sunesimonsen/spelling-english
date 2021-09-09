@@ -1,8 +1,7 @@
-import { html, Component } from "htm/preact";
-import { connect } from "@depository/preact";
-import { loadImages, images, query } from "../models/spelling.js";
-import Thumbnail from "./Thumbnail.js";
+import { html } from "@depository/view";
 import { css } from "stylewars";
+import { loadImages, images, query } from "../models/spelling.js";
+import { Thumbnail } from "./Thumbnail.js";
 
 const styles = css`
   & {
@@ -13,14 +12,18 @@ const styles = css`
   }
 `;
 
-class Thumbnails extends Component {
-  componentDidMount() {
-    this.props.dispatch(loadImages(this.props.query));
+export class Thumbnails {
+  data() {
+    return { query, images };
   }
 
-  componentDidUpdate(prevProps) {
+  didMount() {
+    this.dispatch(loadImages(this.props.query));
+  }
+
+  didUpdate(prevProps) {
     if (prevProps.query !== this.props.query) {
-      this.props.dispatch(loadImages(this.props.query));
+      this.dispatch(loadImages(this.props.query));
     }
   }
 
@@ -34,5 +37,3 @@ class Thumbnails extends Component {
     `;
   }
 }
-
-export default connect(Thumbnails, { query, images });

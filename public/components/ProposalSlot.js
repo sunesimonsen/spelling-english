@@ -1,4 +1,4 @@
-import { html } from "htm/preact";
+import { html } from "@depository/view";
 import { css, classes } from "stylewars";
 
 const styles = css`
@@ -27,8 +27,10 @@ const styles = css`
   }
 `;
 
-const ProposalLetter = ({ status, choice }) => html`
-  <span class=${classes(styles, status)}>${choice && choice.letter}</span>
-`;
-
-export default ProposalLetter;
+export class ProposalSlot {
+  render({ choice, status }) {
+    return html`
+      <span class=${classes(styles, status)}>${choice && choice.letter}</span>
+    `;
+  }
+}

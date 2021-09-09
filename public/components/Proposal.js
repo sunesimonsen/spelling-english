@@ -1,5 +1,9 @@
-import { html } from "htm/preact";
-import { connect } from "@depository/preact";
+import { html } from "@depository/view";
+import { css, classes } from "stylewars";
+import { ProposalSlot } from "./ProposalSlot.js";
+import { Confetti } from "./Confetti.js";
+import { BackspaceButton } from "./BackspaceButton.js";
+
 import {
   proposal,
   solution,
@@ -8,9 +12,6 @@ import {
   nextExercise,
   retryExercise,
 } from "../models/spelling.js";
-import ProposalSlot from "./ProposalSlot.js";
-import Confetti from "./Confetti.js";
-import { css, classes } from "stylewars";
 
 const styles = css`
   &.incorrect {
@@ -45,46 +46,51 @@ const styles = css`
 const status = (correctLetter, choice) =>
   correctLetter === choice.letter ? "correct" : "incorrect";
 
-const Proposal = ({
-  dispatch,
-  proposal,
-  solution,
-  completeProposal,
-  correctProposal,
-}) => {
-  const onConfettiEnd = () => {
-    dispatch(nextExercise());
-  };
+export class Proposal {
+  constructor() {
+    this.onConfettiEnd = () => {
+      this.dispatch(nextExercise());
+    };
 
-  const onAnimationend = () => {
-    setTimeout(() => {
-      dispatch(retryExercise());
-    }, 750);
-  };
+    this.onAnimationend = () => {
+      setTimeout(() => {
+        this.dispatch(retryExercise());
+      }, 750);
+    };
+  }
 
-  return html`
-    <div
-      class=${classes(
-        styles,
-        completeProposal && !correctProposal && "incorrect"
-      )}
-      onAnimationend=${onAnimationend}
-    >
-      ${solution.map(
-        (letter, i) =>
-          html`<${ProposalSlot}
-            status=${completeProposal ? status(letter, proposal[i]) : "none"}
-            choice=${proposal[i]}
-          />`
-      )}
-    </div>
-    <${Confetti} show=${correctProposal} onEnd=${onConfettiEnd} />
-  `;
-};
+  data() {
+    return {
+      proposal,
+      solution,
+      completeProposal,
+      correctProposal,
+    };
+  }
 
-export default connect(Proposal, {
-  proposal,
-  solution,
-  completeProposal,
-  correctProposal,
-});
+  render({ proposal, solution, completeProposal, correctProposal }) {
+    return html`
+      <div
+        class=${classes(
+          styles,
+          completeProposal && !correctProposal && "incorrect"
+        )}
+        @animationend=${this.onAnimationend}
+      >
+        ${solution.map(
+          (letter, i) =>
+            html`
+              <${ProposalSlot}
+                status=${completeProposal
+                  ? status(letter, proposal[i])
+                  : "none"}
+                choice=${proposal[i]}
+              />
+            `
+        )}
+        <${BackspaceButton} />
+      </div>
+      <${Confetti} show=${correctProposal} onEnd=${this.onConfettiEnd} />
+    `;
+  }
+}

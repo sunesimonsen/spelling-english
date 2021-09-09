@@ -1,13 +1,14 @@
-import { html } from "htm/preact";
-import Choices from "./Choices.js";
-import Proposal from "./Proposal.js";
-import Thumbnails from "./Thumbnails.js";
+import { html } from "@depository/view";
+import { Choices } from "./Choices.js";
+import { Proposal } from "./Proposal.js";
+import { Thumbnails } from "./Thumbnails.js";
 
-const SpellingExercise = ({ choices, solution }) =>
-  html`
-    <${Choices} />
-    <${Proposal} />
-    <${Thumbnails} />
-  `;
-
-export default SpellingExercise;
+export class SpellingExercise {
+  render() {
+    return html`
+      <${Choices} />
+      <${Proposal} />
+      <${Thumbnails} />
+    `;
+  }
+}

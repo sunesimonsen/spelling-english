@@ -1,11 +1,10 @@
-import { html } from "htm/preact";
-import { connect } from "@depository/preact";
+import { html } from "@depository/view";
+import { css } from "stylewars";
 import {
   completeProposal,
   pickChoice,
   choiceIsUsed,
 } from "../models/spelling.js";
-import { css } from "stylewars";
 
 const styles = css`
   & {
@@ -17,7 +16,6 @@ const styles = css`
     height: 65px;
     width: 65px;
     margin: 15px;
-    border: none;
     text-align: center;
     text-transform: uppercase;
     background: #f1f1f1;
@@ -34,25 +32,35 @@ const styles = css`
   &:visited {
     overline: none;
   }
+
+  &:active {
+    background: #d6d6d6;
+  }
 `;
 
-const Choice = ({ dispatch, choice, used, completeProposal }) => {
-  const onClick = () => {
-    dispatch(pickChoice(choice));
-  };
+export class Choice {
+  constructor({ choice }) {
+    this.onClick = () => {
+      this.dispatch(pickChoice(this.props.choice));
+    };
+  }
 
-  return html`
-    <button
-      class=${styles}
-      disabled=${completeProposal || used}
-      onClick=${onClick}
-    >
-      ${choice.letter}
-    </button>
-  `;
-};
+  data({ choice }) {
+    return {
+      completeProposal,
+      used: choiceIsUsed(choice.id),
+    };
+  }
 
-export default connect(Choice, ({ choice }) => ({
-  completeProposal,
-  used: choiceIsUsed(choice.id),
-}));
+  render({ choice, used, completeProposal }) {
+    return html`
+      <button
+        class=${styles}
+        disabled=${completeProposal || used}
+        @click=${this.onClick}
+      >
+        ${choice.letter}
+      </button>
+    `;
+  }
+}

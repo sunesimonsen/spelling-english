@@ -1,10 +1,17 @@
-import { html } from "htm/preact";
-import { connect } from "@depository/preact";
+import { html } from "@depository/view";
 import { choices } from "../models/spelling.js";
-import Choice from "./Choice.js";
+import { Choice } from "./Choice.js";
 
-const Choices = ({ choices }) => html`
-  <div>${choices.map((choice) => html`<${Choice} choice=${choice} />`)}</div>
-`;
+export class Choices {
+  data() {
+    return { choices };
+  }
 
-export default connect(Choices, { choices });
+  render({ choices }) {
+    return html`
+      <div>
+        ${choices.map((choice) => html`<${Choice} choice=${choice} />`)}
+      </div>
+    `;
+  }
+}

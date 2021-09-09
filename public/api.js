@@ -1,6 +1,8 @@
 export const loadImages = async (query) => {
   const q = encodeURIComponent(query);
-  const response = await fetch(`/spell/images.php?q=${q}`);
+  const response = await fetch(
+    `https://www.we-knowhow.dk/spell/images.php?q=${q}`
+  );
   const data = await response.json();
 
   return data.value.map(({ imageId, name, thumbnail, thumbnailUrl }) => ({

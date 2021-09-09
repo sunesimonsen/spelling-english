@@ -1,26 +1,20 @@
-import { html } from "htm/preact";
-import { Store } from "@depository/store";
-import { StoreProvider } from "@depository/preact";
-import RootView from "./RootView.js";
-import { promiseMiddleware } from "@depository/promise-middleware";
-import { statusMiddleware } from "@depository/status-middleware";
-import { words } from "../words.js";
-import * as api from "../api.js";
+import { html } from "@depository/view";
+import { css } from "stylewars";
+import { SpellingExercise } from "./SpellingExercise.js";
 
-const store = new Store({
-  currentExercise: api.retrieveExercise(),
-  proposal: [],
-  words,
-  images: [],
-});
-
-store.useMiddleware(promiseMiddleware(api));
-store.useMiddleware(statusMiddleware(api));
-
-const Application = () => html`
-  <${StoreProvider} value=${store}>
-    <${RootView} />
-  <//>
+const styles = css`
+  & {
+    flex: 1;
+    text-align: center;
+  }
 `;
 
-export default Application;
+export class Application {
+  render() {
+    return html`
+      <section class=${styles}>
+        <${SpellingExercise} />
+      </section>
+    `;
+  }
+}

@@ -1,39 +1,30 @@
 import { shuffle, pickSet } from "../utils/random.js";
 
-const words = "words";
+const exercises = "exercises";
 const currentExercise = "currentExercise";
 export const proposal = "proposal";
 export const images = "images";
 
-const word = {
-  inputs: { words, currentExercise },
-  compute: ({ words, currentExercise }) =>
-    words[currentExercise % words.length],
+const exercise = {
+  inputs: { exercises, currentExercise },
+  compute: ({ exercises, currentExercise }) =>
+    exercises[currentExercise % exercises.length],
 };
 
-const possibleCharacters = {
-  inputs: { words },
-  compute: ({ words }) => {
-    return Array.from(
-      words.reduce((result, word) => {
-        [...word.english].forEach((c) => {
-          result.add(c);
-        });
+const possibleCharacters = [];
 
-        return result;
-      }, new Set())
-    );
-  },
-};
+for (let i = 97; i < 122; i++) {
+  possibleCharacters.push(String.fromCharCode(i));
+}
 
 export const solution = {
-  inputs: { word },
-  compute: ({ word }) => [...word.english],
+  inputs: { exercise },
+  compute: ({ exercise }) => [...exercise.word],
 };
 
 export const choices = {
-  inputs: { solution, possibleCharacters },
-  compute: ({ solution, possibleCharacters }) => {
+  inputs: { solution },
+  compute: ({ solution }) => {
     let noise = [];
     const noiseLength = Math.min(8 - solution.length);
 
@@ -91,34 +82,48 @@ export const correctProposal = {
 };
 
 export const pickChoice = (choice) => ({
-  payload: choice,
-  apply: (cache, { payload }) => {
-    cache.update(proposal, (proposal) => [...proposal, payload]);
+  payload: (cache) => {
+    return {
+      [proposal]: [...cache.get(proposal), choice],
+    };
   },
 });
 
 export const nextExercise = () => ({
-  payload: (cache, api) => api.saveExercise(cache.get(currentExercise) + 1),
-  apply: (cache, { payload }) => {
-    cache.set(proposal, []);
-    cache.set(currentExercise, payload);
+  payload: (cache, api) => {
+    const response = api.saveExercise(cache.get(currentExercise) + 1);
+
+    return {
+      [proposal]: [],
+      [currentExercise]: response,
+    };
   },
 });
 
 export const retryExercise = () => ({
-  apply: (cache) => {
-    cache.set(proposal, []);
+  payload: {
+    proposal: [],
   },
 });
 
 export const loadImages = (query) => ({
-  payload: (cache, api) => api.loadImages(query),
-  apply: (cache, { payload }) => {
-    cache.set(images, payload);
+  payload: async (cache, api) => {
+    const response = await api.loadImages(query);
+    return { [images]: response };
   },
 });
 
 export const query = {
-  inputs: { word },
-  compute: ({ word }) => word.english,
+  inputs: { exercise },
+  compute: ({ exercise }) => exercise.search || exercise.word,
 };
+
+export const backspace = () => ({
+  payload: (cache) => {
+    const oldProposal = cache.get(proposal);
+
+    return {
+      [proposal]: oldProposal.slice(0, -1),
+    };
+  },
+});
