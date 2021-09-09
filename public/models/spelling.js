@@ -16,7 +16,7 @@ const possibleCharacters = {
   compute: ({ words }) => {
     return Array.from(
       words.reduce((result, word) => {
-        [...word.danish].forEach((c) => {
+        [...word.english].forEach((c) => {
           result.add(c);
         });
 
@@ -28,7 +28,7 @@ const possibleCharacters = {
 
 export const solution = {
   inputs: { word },
-  compute: ({ word }) => [...word.danish],
+  compute: ({ word }) => [...word.english],
 };
 
 export const choices = {
