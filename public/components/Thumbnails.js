@@ -1,6 +1,6 @@
 import { html } from "@depository/view";
 import { css } from "stylewars";
-import { loadImages, images, query } from "../models/spelling.js";
+import { loadImages, query } from "../models/spelling.js";
 import { Thumbnail } from "./Thumbnail.js";
 
 const styles = css`
@@ -14,7 +14,7 @@ const styles = css`
 
 export class Thumbnails {
   data() {
-    return { query, images };
+    return { query, images: "images" };
   }
 
   didMount() {

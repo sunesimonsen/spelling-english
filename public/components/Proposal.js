@@ -5,7 +5,6 @@ import { Confetti } from "./Confetti.js";
 import { BackspaceButton } from "./BackspaceButton.js";
 
 import {
-  proposal,
   solution,
   completeProposal,
   correctProposal,
@@ -61,7 +60,7 @@ export class Proposal {
 
   data() {
     return {
-      proposal,
+      proposal: "proposal",
       solution,
       completeProposal,
       correctProposal,
