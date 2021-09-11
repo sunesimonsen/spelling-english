@@ -1,7 +1,11 @@
 import { shuffle, pickSet } from "../utils/random.js";
 
+const proposal = "proposal";
+const currentExercise = "currentExercise";
+const exercises = "exercises";
+
 const exercise = {
-  inputs: { exercises: "exercises", currentExercise: "currentExercise" },
+  inputs: { exercises, currentExercise },
   compute: ({ exercises, currentExercise }) =>
     exercises[currentExercise % exercises.length],
 };
@@ -40,7 +44,7 @@ export const choices = {
 };
 
 const proposalById = {
-  inputs: { proposal: "proposal" },
+  inputs: { proposal },
   compute: ({ proposal }) =>
     proposal.reduce(
       (result, choice) => ({ ...result, [choice.id]: choice }),
@@ -59,34 +63,30 @@ export const choiceById = (id) => ({
 });
 
 export const completeProposal = {
-  inputs: {
-    solution,
-    proposal: "proposal",
-  },
+  inputs: { solution, proposal },
   compute: ({ solution, proposal }) => solution.length === proposal.length,
 };
 
 export const correctProposal = {
-  inputs: {
-    solution,
-    proposal: "proposal",
-  },
+  inputs: { solution, proposal },
   compute: ({ solution, proposal }) =>
     solution.length === proposal.length &&
     solution.every((letter, i) => proposal[i].letter === letter),
 };
 
 export const pickChoice = (choice) => ({
-  payload: (cache) => {
+  inputs: { proposal },
+  payload: ({ proposal }) => {
     return {
-      proposal: [...cache.get("proposal"), choice],
+      proposal: [...proposal, choice],
     };
   },
 });
 
 export const nextExercise = () => ({
-  payload: (cache, api) => {
-    const response = api.saveExercise(cache.get("currentExercise") + 1);
+  inputs: { currentExercise },
+  payload: ({ currentExercise }, api) => {
+    const response = api.saveExercise(currentExercise + 1);
 
     return {
       proposal: [],
@@ -97,7 +97,7 @@ export const nextExercise = () => ({
 });
 
 export const retryExercise = () => ({
-  payload: (cache) => {
+  payload: () => {
     return {
       proposal: [],
     };
@@ -105,7 +105,7 @@ export const retryExercise = () => ({
 });
 
 export const loadImages = (query) => ({
-  payload: async (cache, api) => {
+  payload: async (api) => {
     const response = await api.loadImages(query);
     return { images: response };
   },
@@ -117,11 +117,8 @@ export const query = {
 };
 
 export const backspace = () => ({
-  payload: (cache) => {
-    const proposal = cache.get("proposal");
-
-    return {
-      proposal: proposal.slice(0, -1),
-    };
-  },
+  inputs: { proposal },
+  payload: ({ proposal }) => ({
+    proposal: proposal.slice(0, -1),
+  }),
 });
